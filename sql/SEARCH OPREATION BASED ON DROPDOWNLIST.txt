@@ -1,0 +1,47 @@
+SEARCH OPREATION BASED ON DROPDOWNLIST:
+sp_helptext Search_data
+alter procedure Search_data(@country varchar(10),@states varchar(50),@district varchar(50),@city varchar(50),@bloodGroup varchar(10))
+as begin 
+select Name,DOB,phone,country,states,district,city,email,pwd,Cpwd,gender,lang,addres,blood,photo,bno,bloodGroup from  Registation
+ where bloodGroup=@bloodGroup and country=@country and states=@states and district=@district and city=@city
+end
+
+.CS  Code:-
+public void Get_Data()
+        {
+            if (DropDownList1.SelectedItem.Text != "---Select---" && DropDownList2.SelectedItem.Text != "---Select---" && DropDownList3.SelectedItem.Text != "---Select---" && DropDownList4.SelectedItem.Text != "---Select---" && DropDownList5.SelectedItem.Text != "---Select---")
+            {
+                SqlCommand cmd = new SqlCommand("Search_data",con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@bloodGroup",DropDownList5.SelectedItem.Text);
+                cmd.Parameters.AddWithValue("@country",DropDownList1.SelectedItem.Text);
+                cmd.Parameters.AddWithValue("@states",DropDownList2.SelectedItem.Text);
+                cmd.Parameters.AddWithValue("@district", DropDownList3.SelectedItem.Text);
+                cmd.Parameters.AddWithValue("@city",DropDownList4.SelectedItem.Text);
+                SqlDataAdapter da=new SqlDataAdapter(cmd);
+                DataSet ds=new DataSet();
+                da.Fill(ds);
+                GridView1.DataSource=ds;
+                GridView1.DataBind();
+            }
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Get_Data();
+        }
+UPDATE_SP:
+CREATE procedure update_reg(@name varchar(20),@dob date,@phone varchar(50),@country varchar(10),@state varchar(50),@district varchar(50),@city varchar(50),@email varchar(30),@pwd varchar(20),@Cpwd varchar(20),@gender varchar(10),@lang varchar(50),@addres varchar(100),@blood varchar(50),@photo varchar(100),@bno varchar(10),@bloodGroup varchar(10))
+as begin 
+update Registation set name=@name,dob=@dob,phone=@phone,country=@country,states=@state,district=@district,city=@city,email=@email,pwd=@pwd,Cpwd=@Cpwd,gender=@gender,lang=@lang,addres=@addres,blood=@blood,photo=@photo,bloodGroup=@bloodGroup where bno=@bno
+end
+
+INSERT_REG SP:-
+CREATE procedure [dbo].[insert_reg](@name varchar(20),@dob date,@phone varchar(50), @country varchar(10),@state varchar(50),@district varchar(50),@city varchar(50),@email varchar(30),@pwd varchar(20),@Cpwd varchar(20),@gender varchar(10),@lang varchar(50)
+,@addres varchar(100),@blood varchar(50),@photo varchar(100),@bloodgroup varchar(10))
+as begin
+declare @id int,@bno varchar(10)
+set @id=(select ISNULL(MAX(id),0)+1 from Registation) set @bno='blood'+RIGHT('_',5)+CAST(@id as varchar(10))
+insert into Registation values(@name,@dob,@phone,@country,@state,@district,@city,@email,@pwd,@Cpwd,@gender,@lang,@addres,@blood,@photo,@bno,@bloodgroup )
+end
+
